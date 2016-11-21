@@ -22,21 +22,24 @@
 
 using namespace std;
 
+template <typename T> class SkipNode;
+
+template <typename T>
 class SkipList {
     public:
-        SkipList(int min_key, int max_key);
+        SkipList<T>(T min_key, T max_key);
         ~SkipList();
 
-        void insert(int key, string data);
-        string remove(int key);              //return data
-        SkipNode* search(int key);        //return node
+        void insert(T key);
+        bool remove(T key);              //return data
+        SkipNode<T>* search(T key);        //return node
         
-        void print_list();
+        void print_list(ofstream& outFile);
 
         int heightGen();
         
-        SkipNode* head;
-        SkipNode* tail;
+        SkipNode<T>* head;
+        SkipNode<T>* tail;
         float prob = 0.5;
         const int max_height = 8;
         int max_curr_height;
