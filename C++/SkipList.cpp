@@ -126,14 +126,16 @@ SkipNode<T>* SkipList<T>::search(T key) {
 
 template <typename T>
 void SkipList<T>::print_list(ofstream& outFile) {
+    // start at head
     SkipNode<T>* curr_node = head;
     for (int i = 0; i < max_height; i++) {
         outFile << "[HEAD]";
     }
     outFile << endl;
 
+    //iterate through the skiplist
     char value[5] = "0000";
-    while (curr_node != tail) {
+    while (curr_node->fwdNodes[0] != tail) {
         stringstream sstr;
         curr_node = curr_node->fwdNodes[0];
         for (int i = 0; i < curr_node->height; i++) {
@@ -143,4 +145,11 @@ void SkipList<T>::print_list(ofstream& outFile) {
         sstr << endl;
         outFile << sstr.str();
     }
+
+    // found tail
+    for (int i = 0; i < max_height; i++)
+    {
+        outFile << "[TAIL]";
+    }
+    outFile << endl;
 }
