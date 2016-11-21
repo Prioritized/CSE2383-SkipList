@@ -12,51 +12,41 @@
 #ifndef SKIP_LIST_NODE_H
 #define SKIP_LIST_NODE_H
 
+template <typename T> class SkipList;
+
+template <typename T>
 class SkipNode {
-    friend class SkipList;
+    friend class SkipList<T>;
 
     public:
-        SkipNode(int key, std::string data, int height);
-        SkipNode(int key, int height);
-        SkipNode(int height);
-        ~SkipNode();
+        inline SkipNode(T key, int height);
+        inline SkipNode(int height);
+        inline ~SkipNode();
         
-        int key;
-        std::string data;
+        T key;
         int height;
-        SkipNode** fwdNodes;
-
-        
+        SkipNode<T>** fwdNodes;
 };
 
-inline SkipNode::SkipNode(int key, std::string data, int height) {
-    fwdNodes = new SkipNode*[height];
-    this->key = key;
-    this->data = data;
-    this->height = height;
-    for (int i = 0; i < height; i++)
-        fwdNodes[i] = NULL;
-}
-
-inline SkipNode::SkipNode(int key, int height) {
-    fwdNodes = new SkipNode*[height];
+template <typename T>
+inline SkipNode<T>::SkipNode(T key, int height) {
+    fwdNodes = new SkipNode<T>*[height];
     this->key = key;
     this->height = height;
     for (int i = 0; i < height; i++)
         fwdNodes[i] = NULL;
 }
-    
 
-inline SkipNode::SkipNode(int height) {
-    fwdNodes = new SkipNode*[height];
-    data = "";
+template <typename T>
+inline SkipNode<T>::SkipNode(int height) {
+    fwdNodes = new SkipNode<T>*[height];
     this->height = height;
     for (int i = 0; i < height; i++)
         fwdNodes[i] = NULL;
 }
 
-inline SkipNode::~SkipNode() {
-    data = '\0';
+template <typename T>
+inline SkipNode<T>::~SkipNode() {
     key = '\0';
     delete[] fwdNodes;
 }

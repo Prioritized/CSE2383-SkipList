@@ -12,22 +12,25 @@
 */
 #include "SkipList.h"
 #include <time.h>
+#include <ostream>
+#include <fstream>
 
-
-SkipList::SkipList(int min_key = 0, int max_key = 1000) {
+template <typename T>
+SkipList<T>::SkipList(T min_key, T max_key) {
     max_curr_height = 1;
     prob = 0.5;
     srand((unsigned int)time(0));
 
-    head = new SkipNode(min_key, max_height);
-    tail = new SkipNode(max_key, max_height);
+    head = new SkipNode<T>(min_key, max_height);
+    tail = new SkipNode<T>(max_key, max_height);
     for (int i = 0; i < max_height; i++)
         head->fwdNodes[i] = tail;
 }
 
-SkipList::~SkipList() {
-    SkipNode* temp = head;
-    SkipNode* next;
+template <typename T>
+SkipList<T>::~SkipList() {
+    SkipNode<T>* temp = head;
+    SkipNode<T>* next;
     while (temp) {
         next = temp->fwdNodes[1];
         delete temp;
@@ -35,7 +38,8 @@ SkipList::~SkipList() {
     }
 }
 
-int SkipList::heightGen(){
+template <typename T>
+int SkipList<T>::heightGen(){
     int height = 1;
     while((rand()/(double) RAND_MAX) < prob && height < max_height) {
         height++;
@@ -43,9 +47,10 @@ int SkipList::heightGen(){
     return height;
 }
 
-void SkipList::insert(int key, string data) {
-    SkipNode *update[8];
-    SkipNode *curr_node = head;
+template <typename T>
+void SkipList<T>::insert(T key) {
+    SkipNode<T> *update[8];
+    SkipNode<T> *curr_node = head;
     auto lag_node = curr_node;
     for (int height = max_height - 1; height >= 0; height--) {
         while (curr_node->fwdNodes[height]->key < key) {
@@ -64,16 +69,17 @@ void SkipList::insert(int key, string data) {
         }
         max_curr_height = height;
     }
-    SkipNode *new_node = new SkipNode(key, data, height);
+    SkipNode<T> *new_node = new SkipNode<T>(key, height);
     for (int i = 0; i < height; i++) {
         new_node->fwdNodes[i] = update[i]->fwdNodes[i];
         update[i]->fwdNodes[i] = new_node;
     }
 }
 
-string SkipList::remove(int key) {
-    SkipNode *update[8];
-    SkipNode* curr_node = head;
+template <typename T>
+bool SkipList<T>::remove(T key) {
+    SkipNode<T> *update[8];
+    SkipNode<T>* curr_node = head;
     for (int height = max_curr_height - 1; height >= 0; height--) {
         while (curr_node->fwdNodes[height]->key < key) {
             curr_node = curr_node->fwdNodes[height];
@@ -88,21 +94,21 @@ string SkipList::remove(int key) {
             }
             update[height]->fwdNodes[height] = curr_node->fwdNodes[height];
         }
-        string data = curr_node->data;
         delete curr_node;
         curr_node = nullptr;
         // update max_curr_height
         while (max_curr_height > 0 && head->fwdNodes[max_curr_height] == NULL) {
             max_curr_height--;
         }
-        return data;
+        return true;
     }
     else {
-        return "fail";
+        return false;
     }
 }
 
-SkipNode* SkipList::search(int key) {
+template <typename T>
+SkipNode<T>* SkipList<T>::search(T key) {
     SkipNode* curr_node = head;
     for (int height = max_curr_height - 1; height >= 0; height--) {
         while (curr_node->fwdNodes[height]->key < key) {
@@ -114,22 +120,27 @@ SkipNode* SkipList::search(int key) {
         return curr_node;
     }
     else {
-        return NULL;
+        return nullptr;
     }
 }
 
-
-void SkipList::print_list() {
-    stringstream sstr;
-    for (int i = max_curr_height - 1; i >= 0; i--) {
-        SkipNode* curr_node = head->fwdNodes[i];
-        sstr << "HEAD -- ";
-        while (curr_node != tail) {
-            sstr << "(" << curr_node->key << ", " << curr_node->data << ") -- ";
-            curr_node = curr_node->fwdNodes[i];
-        }
-        sstr << "TAIL";
-        sstr << endl;
+template <typename T>
+void SkipList<T>::print_list(ofstream& outFile) {
+    SkipNode<T>* curr_node = head;
+    for (int i = 0; i < max_height; i++) {
+        outFile << "[HEAD]";
     }
-    cout << sstr.str() << endl;
+    outFile << endl;
+
+    char value[5] = "0000";
+    while (curr_node != tail) {
+        stringstream sstr;
+        curr_node = curr_node->fwdNodes[0];
+        for (int i = 0; i < curr_node->height; i++) {
+            sprintf_s(value, "%4d", curr_node->key);
+            sstr << "[" << value << "]";
+        }
+        sstr << endl;
+        outFile << sstr.str();
+    }
 }
