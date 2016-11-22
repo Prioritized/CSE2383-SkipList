@@ -31,7 +31,7 @@ class SkipList {
         ~SkipList();
 
         void insert(T key);
-        bool remove(T key);              //return data
+        bool remove(T key);                //return data
         SkipNode<T>* search(T key);        //return node
         
         void print_list(ofstream& outFile);
@@ -41,7 +41,7 @@ class SkipList {
         SkipNode<T>* head;
         SkipNode<T>* tail;
         float prob = 0.5;
-        const int max_height = 8;
+        static const int max_height = 16;
         int max_curr_height;
 };
 

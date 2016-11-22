@@ -49,7 +49,7 @@ int SkipList<T>::heightGen(){
 
 template <typename T>
 void SkipList<T>::insert(T key) {
-    SkipNode<T> *update[8];
+    SkipNode<T> *update[max_height];
     SkipNode<T> *curr_node = head;
     auto lag_node = curr_node;
     for (int height = max_height - 1; height >= 0; height--) {
@@ -78,7 +78,7 @@ void SkipList<T>::insert(T key) {
 
 template <typename T>
 bool SkipList<T>::remove(T key) {
-    SkipNode<T> *update[8];
+    SkipNode<T> *update[max_height];
     SkipNode<T>* curr_node = head;
     for (int height = max_curr_height - 1; height >= 0; height--) {
         while (curr_node->fwdNodes[height]->key < key) {
@@ -139,7 +139,7 @@ void SkipList<T>::print_list(ofstream& outFile) {
         stringstream sstr;
         curr_node = curr_node->fwdNodes[0];
         for (int i = 0; i < curr_node->height; i++) {
-            sprintf_s(value, "%4d", curr_node->key);
+            sprintf_s(value, "%04d", curr_node->key);
             sstr << "[" << value << "]";
         }
         sstr << endl;
