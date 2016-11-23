@@ -10,10 +10,12 @@
 * This is a Skip List implementation using node objects from SkipNode.h.
 *
 */
+
 #include "SkipList.h"
 #include <time.h>
 #include <ostream>
 #include <fstream>
+
 
 template <typename T>
 SkipList<T>::SkipList(T min_key, T max_key) {
@@ -29,8 +31,8 @@ SkipList<T>::SkipList(T min_key, T max_key) {
 
 template <typename T>
 SkipList<T>::~SkipList() {
-    SkipNode<T>* temp = head;
-    SkipNode<T>* next;
+    SkipNode<T> *temp = head;
+    SkipNode<T> *next;
     while (temp) {
         next = temp->fwdNodes[1];
         delete temp;
@@ -79,7 +81,7 @@ void SkipList<T>::insert(T key) {
 template <typename T>
 bool SkipList<T>::remove(T key) {
     SkipNode<T> *update[max_height];
-    SkipNode<T>* curr_node = head;
+    SkipNode<T> *curr_node = head;
     for (int height = max_curr_height - 1; height >= 0; height--) {
         while (curr_node->fwdNodes[height]->key < key) {
             curr_node = curr_node->fwdNodes[height];
@@ -108,8 +110,8 @@ bool SkipList<T>::remove(T key) {
 }
 
 template <typename T>
-SkipNode<T>* SkipList<T>::search(T key) {
-    SkipNode* curr_node = head;
+SkipNode<T> *SkipList<T>::search(T key) {
+    SkipNode *curr_node = head;
     for (int height = max_curr_height - 1; height >= 0; height--) {
         while (curr_node->fwdNodes[height]->key < key) {
             curr_node = curr_node->fwdNodes[height];
@@ -127,7 +129,7 @@ SkipNode<T>* SkipList<T>::search(T key) {
 template <typename T>
 void SkipList<T>::print_list(ofstream& outFile) {
     // start at head
-    SkipNode<T>* curr_node = head;
+    SkipNode<T> *curr_node = head;
     for (int i = 0; i < max_height; i++) {
         outFile << "[HEAD]";
     }

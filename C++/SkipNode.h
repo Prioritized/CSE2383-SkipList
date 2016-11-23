@@ -9,6 +9,7 @@
 * if it was to be used for a different tree.
 *
 */
+
 #ifndef SKIP_LIST_NODE_H
 #define SKIP_LIST_NODE_H
 

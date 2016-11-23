@@ -13,8 +13,9 @@
 * data members of SkipNode directly.
 *
 */
-#ifndef SKIP_LIST
-#define SKIP_LIST
+
+#ifndef SKIP_LIST_H
+#define SKIP_LIST_H
 
 #include <iostream>
 #include <sstream>
@@ -22,7 +23,6 @@
 
 using namespace std;
 
-template <typename T> class SkipNode;
 
 template <typename T>
 class SkipList {
@@ -31,15 +31,15 @@ class SkipList {
         ~SkipList();
 
         void insert(T key);
-        bool remove(T key);                //return data
-        SkipNode<T>* search(T key);        //return node
+        bool remove(T key);
+        SkipNode<T> *search(T key);
         
         void print_list(ofstream& outFile);
 
         int heightGen();
         
-        SkipNode<T>* head;
-        SkipNode<T>* tail;
+        SkipNode<T> *head;
+        SkipNode<T> *tail;
         float prob = 0.5;
         static const int max_height = 16;
         int max_curr_height;
