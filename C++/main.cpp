@@ -16,6 +16,7 @@
 #include <random>
 #include <chrono>
 #include "SkipList.cpp"
+#include "BinarySearchTree.h"
 
 using namespace std;
 
@@ -38,7 +39,7 @@ int main() {
         dist[i] = distr(generator);
 
     // Skip List
-    ofstream SLoutFile("SL.txt");
+    //ofstream SLoutFile("SL.txt");
 
     SkipList<long> *skiplist = new SkipList<long>(min_key, max_key);
 
@@ -52,11 +53,19 @@ int main() {
     auto duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << duration << endl;
 
-    SLoutFile.close();
+    //SLoutFile.close();
 
-    //timeOut << "SL duration:  " << duration;
+    
+    // Binary Tree
+    BSTree* binarytree = new BSTree();
 
-    //timeOut.close();
+    t0 = chrono::steady_clock::now();
+    for (long i = 0; i < size_n; i++)
+        binarytree->insert(dist[i]);
+    t1 = chrono::steady_clock::now();
+
+    duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+    cout << duration << endl;
 
     system("pause");
     return 0;
