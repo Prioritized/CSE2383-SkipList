@@ -1,5 +1,5 @@
 /*
-* main.cpp
+* SkipList.cpp
 *
 * author:  Jack Fletcher
 * date:    10/23/2016
@@ -7,7 +7,7 @@
 * CSE 2383 Data Structures
 * Honors Assignment
 *
-* This is a Skip List implementation using SkipNode.
+* This is a Skip List implementation using node objects from SkipNode.h.
 *
 */
 #include "SkipList.h"
