@@ -4,9 +4,11 @@
 * author: Jack Fletcher
 * date: 10/23/2016
 *
-* This is a node class used to build a skip list.  The data the node stores
-* is integer data (currently) but can be rewritten to store any type of data
-* if it was to be used for a different tree.
+* This is a node class used to build a skip list.  
+* 
+* Implementation is based on William Pugh's pseudocode in his paper titled
+* "Skip Lists: A Probabilistic Alternative to Balanced Trees"
+*
 *
 */
 
@@ -26,30 +28,30 @@ class SkipNode {
         
         T key;
         int height;
-        SkipNode<T>** fwdNodes;
+        SkipNode<T>** forward;
 };
 
 template <typename T>
 inline SkipNode<T>::SkipNode(T key, int height) {
-    fwdNodes = new SkipNode<T>*[height];
+    forward = new SkipNode<T>*[height];
     this->key = key;
     this->height = height;
     for (int i = 0; i < height; i++)
-        fwdNodes[i] = NULL;
+        forward[i] = NULL;
 }
 
 template <typename T>
 inline SkipNode<T>::SkipNode(int height) {
-    fwdNodes = new SkipNode<T>*[height];
+    forward = new SkipNode<T>*[height];
     this->height = height;
     for (int i = 0; i < height; i++)
-        fwdNodes[i] = NULL;
+        forward[i] = NULL;
 }
 
 template <typename T>
 inline SkipNode<T>::~SkipNode() {
     key = '\0';
-    delete[] fwdNodes;
+    delete[] forward;
 }
 
 

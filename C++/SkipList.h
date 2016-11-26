@@ -1,5 +1,5 @@
 /*
-* main.cpp
+* SkipList.h
 *
 * author:  Jack Fletcher
 * date:    10/23/2016
@@ -8,6 +8,8 @@
 * Honors Assignment
 *
 * This is a Skip List implementation using SkipListNode.
+* Implementation is based on William Pugh's pseudocode in his paper titled
+* "Skip Lists: A Probabilistic Alternative to Balanced Trees"
 *
 * This class is a friend class of SkipNode and therefore can access the private
 * data members of SkipNode directly.
@@ -19,7 +21,10 @@
 
 #include <iostream>
 #include <sstream>
-#include "SkipNode.h"
+#include <time.h>
+#include <ostream>
+#include <fstream>
+#include "SkipListNode.h"
 
 using namespace std;
 
@@ -44,5 +49,146 @@ class SkipList {
         static const int max_height = 16;
         int max_curr_height;
 };
+
+
+template <typename T>
+SkipList<T>::SkipList(T min_key, T max_key) {
+    max_curr_height = 1;
+    prob = 0.5;
+    srand((unsigned int)time(0));
+
+    head = new SkipNode<T>(min_key, max_height);
+    tail = new SkipNode<T>(max_key, max_height);
+    for (int i = 0; i < max_height; i++)
+        head->forward[i] = tail;
+}
+
+template <typename T>
+SkipList<T>::~SkipList() {
+    SkipNode<T> *temp = head;
+    SkipNode<T> *next;
+    while (temp) {
+        next = temp->forward[1];
+        delete temp;
+        temp = next;
+    }
+}
+
+template <typename T>
+int SkipList<T>::heightGen() {
+    int height = 1;
+    while ((rand() / (double)RAND_MAX) < prob && height < max_height) {
+        height++;
+    }
+    return height;
+}
+
+template <typename T>
+void SkipList<T>::insert(T key) {
+    SkipNode<T> *update[max_height];
+    SkipNode<T> *curr_node = head;
+    auto lag_node = curr_node;
+    for (int height = max_height - 1; height >= 0; height--) {
+        while (curr_node->forward[height]->key < key) {
+            lag_node = curr_node;
+            curr_node = curr_node->forward[height];
+        }
+        update[height] = curr_node;
+        curr_node = lag_node;
+    }
+    curr_node = curr_node->forward[0];
+
+    int height = heightGen();
+    if (height > max_curr_height) {
+        for (int i = max_curr_height; i <= height - 1; i++) {
+            update[i] = head;
+        }
+        max_curr_height = height;
+    }
+    SkipNode<T> *new_node = new SkipNode<T>(key, height);
+    for (int i = 0; i < height; i++) {
+        new_node->forward[i] = update[i]->forward[i];
+        update[i]->forward[i] = new_node;
+    }
+}
+
+template <typename T>
+bool SkipList<T>::remove(T key) {
+    SkipNode<T> *update[max_height];
+    SkipNode<T> *curr_node = head;
+    for (int height = max_curr_height - 1; height >= 0; height--) {
+        while (curr_node->forward[height]->key < key) {
+            curr_node = curr_node->forward[height];
+        }
+        update[height] = curr_node;
+    }
+    curr_node = curr_node->forward[0];
+    if (curr_node->key = key) {
+        for (int height = 0; height < max_curr_height; height++) {
+            if (update[height]->forward[height] != curr_node) {
+                break;
+            }
+            update[height]->forward[height] = curr_node->forward[height];
+        }
+        delete curr_node;
+        curr_node = nullptr;
+        // update max_curr_height
+        while (max_curr_height > 0 && head->forward[max_curr_height] == NULL) {
+            max_curr_height--;
+        }
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+template <typename T>
+SkipNode<T> *SkipList<T>::search(T key) {
+    SkipNode<T> *curr_node = head;
+    for (int height = max_curr_height - 1; height >= 0; height--) {
+        while (curr_node->forward[height]->key < key) {
+            curr_node = curr_node->forward[height];
+        }
+    }
+    curr_node = curr_node->forward[0];
+    if (curr_node->key == key) {
+        return curr_node;
+    }
+    else {
+        return nullptr;
+    }
+}
+
+template <typename T>
+void SkipList<T>::print_list(ofstream& outFile) {
+    // start at head
+    SkipNode<T> *curr_node = head;
+    for (int i = 0; i < max_height; i++) {
+        outFile << "[HEAD]";
+    }
+    outFile << endl;
+
+    //iterate through the skiplist
+    char value[5] = "0000";
+    while (curr_node->forward[0] != tail) {
+        stringstream sstr;
+        curr_node = curr_node->forward[0];
+        for (int i = 0; i < curr_node->height; i++) {
+            sprintf_s(value, "%04d", curr_node->key);
+            sstr << "[" << value << "]";
+        }
+        sstr << endl;
+        outFile << sstr.str();
+    }
+
+    // found tail
+    for (int i = 0; i < max_height; i++)
+    {
+        outFile << "[TAIL]";
+    }
+    outFile << endl;
+}
+
 
 #endif
