@@ -28,40 +28,28 @@ class SkipNode {
         
         T key;
         int height;
-        SkipNode<T>** forward;
+        std::vector<SkipNode<T>*> forward;
 };
 
 template <typename T>
 inline SkipNode<T>::SkipNode(T key, int height) {
-    forward = new SkipNode<T>*[height];
     this->key = key;
     this->height = height;
-    for (int i = 0; i < height; i++)
-        forward[i] = NULL;
+    for (int i = 0; i <= height; i++)
+        forward.emplace_back(nullptr);
 }
 
 template <typename T>
 inline SkipNode<T>::SkipNode(int height) {
-    forward = new SkipNode<T>*[height];
     this->height = height;
-    for (int i = 0; i < height; i++)
-        forward[i] = NULL;
+    for (int i = 0; i <= height; i++)
+        forward.emplace_back(nullptr);
 }
 
 template <typename T>
 SkipNode<T>::~SkipNode() {
     key = '\0';
     height = 0;
-
-    for (int i = 0; i < height; i++) {
-        forward[i] = NULL;
-    }
-    for (int i = 0; i < height; i++) {
-        delete forward[i];
-    }
-
-    delete[] forward;
 }
-
 
 #endif
