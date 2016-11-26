@@ -11,6 +11,7 @@
 *
 */
 
+
 #include <fstream>
 #include <iostream>
 #include <random>
@@ -22,7 +23,64 @@
 using namespace std;
 
 
+void print_skiplist();
+void test_timing();
+void test_delete();
+
 int main() {
+    bool loop = true;
+    while (loop) {
+        int choice;
+        cout << "Pick:" << endl;
+        cout << "(1) print example skip list" << endl;
+        cout << "(2) test timing(insert and search)" << endl;
+        cout << "(3) test deletion" << endl;
+        cout << "(9) exit" << endl;
+        cin >> choice;
+
+        switch (choice) {
+        case 1: 
+            print_skiplist();
+            break;
+        case 2: 
+            test_timing();
+            break;
+        case 3: 
+            test_delete();
+            break;
+        case 9: 
+            loop = false;
+            break;
+        default: break;
+        }
+
+    }
+    return 0;
+}
+
+
+void print_skiplist() {
+    ofstream SLoutFile("SL.txt");
+    SkipList<int> *SLprint = new SkipList<int>(0, 9999);
+
+    random_device print_rand_dev;
+    mt19937 print_generator(print_rand_dev());
+    uniform_int_distribution<int> print_distr(1, 9998);
+
+    int example_points[100];
+    for (int i = 0; i < 100; ++i)
+        example_points[i] = print_distr(print_generator);
+
+    for (int i = 0; i < 100; i++)
+        SLprint->insert(example_points[i]);
+
+    SLprint->print_list(SLoutFile);
+
+    SLoutFile.close();
+}
+
+
+void test_timing() {
     const long int min_key = 0;
     const long int max_key = LONG_MAX;
 
@@ -39,7 +97,7 @@ int main() {
     long *dist = new long[size_n];
     for (long i = 0; i < size_n; ++i)
         dist[i] = distr(generator);
-    
+
 
     // Skip List
     cout << "---Skip List----" << endl;
@@ -109,30 +167,30 @@ int main() {
 
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << "search: " << duration << endl << endl;
+}
 
 
-    // print example skip list
-    {
-        ofstream SLoutFile("SL.txt");
-        SkipList<int> *SLprint = new SkipList<int>(0, 10000);
+void test_delete() {
+    ofstream SL_delete("SL_delete.txt");
+    ofstream SL_delete15("SL_delete15.txt");
 
-        random_device print_rand_dev;
-        mt19937 print_generator(rand_dev());
-        uniform_int_distribution<int> print_distr(1, 9999);
+    SkipList<int> *skiplist_delete = new SkipList<int>(0, 50);
+    int arr[5] = { 10, 15, 20, 30, 40 };
 
-        int *example_points = new int[100];
-        for (int i = 0; i < 100; ++i)
-            example_points[i] = print_distr(generator);
+    // insert
+    skiplist_delete->insert(arr[0]);
+    skiplist_delete->insert(arr[1]);
+    skiplist_delete->insert(arr[2]);
+    skiplist_delete->insert(arr[3]);
+    skiplist_delete->insert(arr[4]);
 
-        for (int i = 0; i < 100; i++)
-            SLprint->insert(example_points[i]);
-        
-        SLprint->print_list(SLoutFile);
+    skiplist_delete->print_list(SL_delete);
 
-        SLoutFile.close();
-    }
+    skiplist_delete->remove(15);
 
-    system("pause");
-    return 0;
+    skiplist_delete->print_list(SL_delete15);
+
+    SL_delete.close();
+    SL_delete15.close();
 }
 

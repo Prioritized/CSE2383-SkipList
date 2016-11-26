@@ -49,8 +49,17 @@ inline SkipNode<T>::SkipNode(int height) {
 }
 
 template <typename T>
-inline SkipNode<T>::~SkipNode() {
+SkipNode<T>::~SkipNode() {
     key = '\0';
+    height = 0;
+
+    for (int i = 0; i < height; i++) {
+        forward[i] = NULL;
+    }
+    for (int i = 0; i < height; i++) {
+        delete forward[i];
+    }
+
     delete[] forward;
 }
 
