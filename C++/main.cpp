@@ -54,6 +54,8 @@ int main() {
         default: break;
         }
 
+        cout << endl;
+
     }
     return 0;
 }
