@@ -33,7 +33,7 @@ int main() {
         int choice;
         cout << "Pick:" << endl;
         cout << "(1) print example skip list" << endl;
-        cout << "(2) test timing(insert and search)" << endl;
+        cout << "(2) test timing (insert and search and deletion)" << endl;
         cout << "(3) test deletion" << endl;
         cout << "(9) exit" << endl;
         cin >> choice;
@@ -120,7 +120,15 @@ void test_timing() {
         skiplist->search(dist[i]);
     t1 = chrono::steady_clock::now();
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
-    cout << "search: " << duration << endl << endl;
+    cout << "search: " << duration << endl;
+
+    // delete
+    t0 = chrono::steady_clock::now();
+    for (long i = 0; i < size_n; i++)
+        skiplist->remove(dist[i]);
+    t1 = chrono::steady_clock::now();
+    duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+    cout << "delete: " << duration << endl << endl;
 
 
     // Binary Tree

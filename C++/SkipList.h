@@ -76,7 +76,7 @@ SkipList<T>::~SkipList() {
 
 template <typename T>
 int SkipList<T>::heightGen() {
-    int height = 0;
+    int height = 1;
     while ((rand() / (double)RAND_MAX) < prob && height < max_height) {
         height++;
     }
@@ -85,25 +85,22 @@ int SkipList<T>::heightGen() {
 
 template <typename T>
 void SkipList<T>::insert(T key) {
+    int height = heightGen();
     SkipNode<T> *update[max_height];
     SkipNode<T> *curr_node = head;
-    for (int height = max_curr_height; height >= 0; height--) {
-        while (curr_node->forward[height]->key < key) {
-            curr_node = curr_node->forward[height];
+    for (int i = height - 1; i >= 0; i--) {
+        while (curr_node->forward[i]->key < key) {
+            curr_node = curr_node->forward[i];
         }
-        update[height] = curr_node;
+        update[i] = curr_node;
     }
-
-    int height = heightGen();
+    
     if (height > max_curr_height) {
-        for (int i = max_curr_height + 1; i <= height; i++) {
-            update[i] = head;
-        }
         max_curr_height = height;
     }
-
+    
     SkipNode<T> *new_node = new SkipNode<T>(key, height);
-    for (int i = 0; i <= height; i++) {
+    for (int i = 0; i < height; i++) {
         new_node->forward[i] = update[i]->forward[i];
         update[i]->forward[i] = new_node;
     }
@@ -113,23 +110,20 @@ template <typename T>
 bool SkipList<T>::remove(T key) {
     SkipNode<T> *update[max_height];
     SkipNode<T> *curr_node = head;
-    for (int height = max_curr_height - 1; height >= 0; height--) {
-        while (curr_node->forward[height]->key < key) {
-            curr_node = curr_node->forward[height];
+    for (int i = max_curr_height - 1; i >= 0; i--) {
+        while (curr_node->forward[i]->key < key) {
+            curr_node = curr_node->forward[i];
         }
-        update[height] = curr_node;
+        update[i] = curr_node;
     }
     curr_node = curr_node->forward[0];
-    if (curr_node->key = key) {
-        for (int height = 0; height < max_curr_height; height++) {
-            if (update[height]->forward[height] != curr_node) {
-                break;
-            }
-            update[height]->forward[height] = curr_node->forward[height];
+    if (curr_node->key == key) {
+        for (int i = 0; i < curr_node->height; i++) {
+            update[i]->forward[i] = curr_node->forward[i];
         }
         delete curr_node;
         // update max_curr_height
-        while (max_curr_height > 0 && head->forward[max_curr_height] == tail) {
+        while (max_curr_height > 0 && head->forward[max_curr_height - 1] == tail) {
             max_curr_height--;
         }
         return true;
@@ -142,9 +136,9 @@ bool SkipList<T>::remove(T key) {
 template <typename T>
 SkipNode<T> *SkipList<T>::search(T key) {
     SkipNode<T> *curr_node = head;
-    for (int height = max_curr_height - 1; height >= 0; height--) {
-        while (curr_node->forward[height]->key < key) {
-            curr_node = curr_node->forward[height];
+    for (int i = max_curr_height - 1; i >= 0; i--) {
+        while (curr_node->forward[i]->key < key) {
+            curr_node = curr_node->forward[i];
         }
     }
     curr_node = curr_node->forward[0];
@@ -177,12 +171,12 @@ void SkipList<T>::print_list(ofstream& outFile) {
     while (curr_node->forward[0] != tail) {
         stringstream sstr;
         curr_node = curr_node->forward[0];
-        for (int i = 0; i <= curr_node->height; i++) {
+        for (int i = 0; i < curr_node->height; i++) {
             snprintf(value, sizeof(value), "%04d", curr_node->key);
             sstr << "[" << value << "]";
         }
         sstr << endl;
-        for (int i = 0; i <= curr_node->height; i++) {
+        for (int i = 0; i < curr_node->height; i++) {
             snprintf(value, sizeof(value), "%04d", curr_node->forward[i]->key);
             sstr << "[" << value << "]";
         }
