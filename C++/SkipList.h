@@ -85,16 +85,18 @@ int SkipList<T>::heightGen() {
 
 template <typename T>
 void SkipList<T>::insert(T key) {
-    int height = heightGen();
     SkipNode<T> *update[max_height];
     SkipNode<T> *curr_node = head;
-    for (int i = height - 1; i >= 0; i--) {
+
+
+    for (int i = max_height - 1; i >= 0; i--) {
         while (curr_node->forward[i]->key < key) {
             curr_node = curr_node->forward[i];
         }
         update[i] = curr_node;
     }
-    
+
+    int height = heightGen();
     if (height > max_curr_height) {
         max_curr_height = height;
     }

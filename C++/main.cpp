@@ -152,9 +152,17 @@ void test_timing() {
     t1 = chrono::steady_clock::now();
 
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
-    cout << "search: " << duration << endl << endl;
+    cout << "search: " << duration << endl;
 
+    // delete
+    t0 = chrono::steady_clock::now();
+    binarytree->destroy_tree();
+    t1 = chrono::steady_clock::now();
 
+    duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+    cout << "delete: " << duration << endl << endl;
+
+    /*
     // Linked List
     cout << "---Linked List----" << endl;
 
@@ -177,6 +185,7 @@ void test_timing() {
 
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << "search: " << duration << endl << endl;
+    */
 }
 
 
