@@ -35,7 +35,7 @@ public:
     void insert(T); //fucntion used to insert new node in order in the list
     void print(); //prints the contents of the linked list
     LinkedListNode<T>* search(T); //searches for a value in the linked list and returns the point to object that contains that value
-
+    void remove(T);
 private:
     LinkedListNode<T> *startPtr; //stores the pointer of first object in the linked list
     LinkedListNode<T> *endPtr; //stored the pointer of the last object in the linked list
@@ -188,4 +188,31 @@ LinkedListNode<T>* LinkedList<T>::search(T key) //search functions that searches
     }
     return nodePtr; //returns pointer to the node that contains data equal to key (NULL if not found)
 }
+
+template <typename T>
+void LinkedList<T>::remove(T key) //removes node associated with the given key
+{
+    LinkedListNode<T>* dnode = startPtr;
+    if (dnode->data == key) {
+        startPtr = dnode->nextPtr;
+        delete dnode;
+        return;
+    }
+    LinkedListNode<T>* lagnode = dnode;
+    dnode = dnode->nextPtr;
+
+    while (dnode != NULL) {
+        if (dnode->data == key) {
+            lagnode->nextPtr = dnode->nextPtr;
+            if (dnode == endPtr) {
+                endPtr = lagnode;
+            }
+            delete dnode;
+            break;
+        }
+        lagnode = dnode;
+        dnode = dnode->nextPtr;
+    }
+}
+
 #endif 

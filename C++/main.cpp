@@ -218,7 +218,18 @@ void test_timing(ofstream& time_csv, bool test_linked_list) {
         t1 = chrono::steady_clock::now();
 
         duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
-        cout << "search: " << duration << endl << endl;
+        cout << "search: " << duration << endl;
+        write_to_csv(time_csv, size_n, duration, structure, operation);
+
+        // delete
+        operation = "delete";
+        t0 = chrono::steady_clock::now();
+        for (long i = 0; i < size_n; i++)
+            linkedlist->remove(dist[i]);
+        t1 = chrono::steady_clock::now();
+
+        duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+        cout << "delete: " << duration << endl << endl;
         write_to_csv(time_csv, size_n, duration, structure, operation);
 
     }
