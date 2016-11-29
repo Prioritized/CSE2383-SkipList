@@ -184,7 +184,8 @@ void test_timing(ofstream& time_csv, bool test_linked_list) {
     // delete
     operation = "delete";
     t0 = chrono::steady_clock::now();
-    binarytree->destroy_tree();
+    for (long i = 0; i < size_n; i++)
+        binarytree->remove(dist[i]);
     t1 = chrono::steady_clock::now();
 
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
