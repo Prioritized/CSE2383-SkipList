@@ -24,17 +24,27 @@ using namespace std;
 
 
 void print_skiplist();
-void test_timing();
+void test_timing(ofstream& time_csv, bool test_linked_list);
 void test_delete();
 
+void write_to_csv(ofstream& file, long n, long long time, string structure, string operation) {
+    float tpo = (float) time / n;
+    file << n << ',' << time << ',' << tpo << ',' << structure << ',' << operation << ',' << endl;
+}
+
+
 int main() {
+    ofstream time_csv("timing_results.csv", std::ios::app | std::ios::out);
+    time_csv << "n, time, tpo, structure, operation" << endl;
+
     bool loop = true;
     while (loop) {
         int choice;
         cout << "Pick:" << endl;
         cout << "(1) print example skip list" << endl;
-        cout << "(2) test timing (insert and search and deletion)" << endl;
-        cout << "(3) test deletion" << endl;
+        cout << "(2) test timing (skip list, binary tree, and linked list)" << endl;
+        cout << "(3) test timing (skip list and binary tree)" << endl;
+        cout << "(4) test deletion" << endl;
         cout << "(9) exit" << endl;
         cin >> choice;
 
@@ -42,10 +52,13 @@ int main() {
         case 1: 
             print_skiplist();
             break;
-        case 2: 
-            test_timing();
+        case 2:
+            test_timing(time_csv, true);
             break;
-        case 3: 
+        case 3:
+            test_timing(time_csv, false);
+            break;
+        case 4: 
             test_delete();
             break;
         case 9: 
@@ -82,12 +95,15 @@ void print_skiplist() {
 }
 
 
-void test_timing() {
+void test_timing(ofstream& time_csv, bool test_linked_list) {
+    string structure;
+    string operation;
+    long size_n;
+
     const long int min_key = 0;
     const long int max_key = LONG_MAX;
 
     // prompt for n
-    long size_n;
     cout << "Enter size of input: ";
     cin >> size_n;
 
@@ -102,10 +118,12 @@ void test_timing() {
 
 
     // Skip List
-    cout << "---Skip List----" << endl;
+    structure = "skip list";
+    cout << "----Skip List----" << endl;
     SkipList<long> *skiplist = new SkipList<long>(min_key, max_key);
 
     // insert
+    operation = "insert";
     chrono::steady_clock::time_point t0 = chrono::steady_clock::now();
     for (long i = 0; i < size_n; i++)
         skiplist->insert(dist[i]);
@@ -114,29 +132,35 @@ void test_timing() {
     auto duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << "insert: " << duration << endl;
 
+    write_to_csv(time_csv, size_n, duration, structure, operation);
+
     // search
+    operation = "search";
     t0 = chrono::steady_clock::now();
     for (long i = 0; i < size_n; i++)
         skiplist->search(dist[i]);
     t1 = chrono::steady_clock::now();
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << "search: " << duration << endl;
+    write_to_csv(time_csv, size_n, duration, structure, operation);
 
     // delete
+    operation = "delete";
     t0 = chrono::steady_clock::now();
     for (long i = 0; i < size_n; i++)
         skiplist->remove(dist[i]);
     t1 = chrono::steady_clock::now();
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << "delete: " << duration << endl << endl;
-
+    write_to_csv(time_csv, size_n, duration, structure, operation);
 
     // Binary Tree
+    structure = "binary tree";
     cout << "----Binary Tree---" << endl;
-
     BSTree *binarytree = new BSTree();
 
     // insert
+    operation = "insert";
     t0 = chrono::steady_clock::now();
     for (long i = 0; i < size_n; i++)
         binarytree->insert(dist[i]);
@@ -144,8 +168,10 @@ void test_timing() {
 
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << "insert: " << duration << endl;
+    write_to_csv(time_csv, size_n, duration, structure, operation);
 
     // search
+    operation = "search";
     t0 = chrono::steady_clock::now();
     for (long i = 0; i < size_n; i++)
         binarytree->search(dist[i]);
@@ -153,39 +179,49 @@ void test_timing() {
 
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << "search: " << duration << endl;
+    write_to_csv(time_csv, size_n, duration, structure, operation);
 
     // delete
+    operation = "delete";
     t0 = chrono::steady_clock::now();
     binarytree->destroy_tree();
     t1 = chrono::steady_clock::now();
 
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << "delete: " << duration << endl << endl;
+    write_to_csv(time_csv, size_n, duration, structure, operation);
 
-    /*
-    // Linked List
-    cout << "---Linked List----" << endl;
+    if (test_linked_list) {
+        // Linked List
+        structure = "linked list";
+        cout << "----Linked List----" << endl;
 
-    LinkedList<long> *linkedlist = new LinkedList<long>();
+        LinkedList<long> *linkedlist = new LinkedList<long>();
 
-    // insert
-    t0 = chrono::steady_clock::now();
-    for (long i = 0; i < size_n; i++)
-        linkedlist->insert(dist[i]);
-    t1 = chrono::steady_clock::now();
+        // insert
+        operation = "insert";
+        t0 = chrono::steady_clock::now();
+        for (long i = 0; i < size_n; i++)
+            linkedlist->insert(dist[i]);
+        t1 = chrono::steady_clock::now();
 
-    duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
-    cout << "insert: " << duration << endl;
+        duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+        cout << "insert: " << duration << endl;
+        write_to_csv(time_csv, size_n, duration, structure, operation);
 
-    // search
-    t0 = chrono::steady_clock::now();
-    for (long i = 0; i < size_n; i++)
-        linkedlist->search(dist[i]);
-    t1 = chrono::steady_clock::now();
+        // search
+        operation = "search";
+        t0 = chrono::steady_clock::now();
+        for (long i = 0; i < size_n; i++)
+            linkedlist->search(dist[i]);
+        t1 = chrono::steady_clock::now();
 
-    duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
-    cout << "search: " << duration << endl << endl;
-    */
+        duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+        cout << "search: " << duration << endl << endl;
+        write_to_csv(time_csv, size_n, duration, structure, operation);
+
+    }
+
 }
 
 
@@ -212,4 +248,5 @@ void test_delete() {
     SL_delete.close();
     SL_delete15.close();
 }
+
 
