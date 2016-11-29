@@ -31,6 +31,7 @@ class BSTree {
         BSTree();
         ~BSTree();
 
+        void remove(long key);
         void insert(long key);
         BSTNode *search(long key);
         void destroy_tree();
