@@ -92,6 +92,7 @@ void print_skiplist() {
     SLprint->print_list(SLoutFile);
 
     SLoutFile.close();
+    delete SLprint;
 }
 
 
@@ -154,6 +155,9 @@ void test_timing(ofstream& time_csv, bool test_linked_list) {
     cout << "delete: " << duration << endl << endl;
     write_to_csv(time_csv, size_n, duration, structure, operation);
 
+    delete skiplist;
+
+
     // Binary Tree
     structure = "binary tree";
     cout << "----Binary Tree---" << endl;
@@ -191,6 +195,8 @@ void test_timing(ofstream& time_csv, bool test_linked_list) {
     duration = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     cout << "delete: " << duration << endl << endl;
     write_to_csv(time_csv, size_n, duration, structure, operation);
+    
+    delete binarytree;
 
     if (test_linked_list) {
         // Linked List
@@ -232,8 +238,10 @@ void test_timing(ofstream& time_csv, bool test_linked_list) {
         cout << "delete: " << duration << endl << endl;
         write_to_csv(time_csv, size_n, duration, structure, operation);
 
+        delete linkedlist;
     }
 
+    delete[] dist;
 }
 
 
@@ -259,6 +267,8 @@ void test_delete() {
 
     SL_delete.close();
     SL_delete15.close();
+
+    delete skiplist_delete;
 }
 
 

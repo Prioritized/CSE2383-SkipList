@@ -65,12 +65,15 @@ SkipList<T>::SkipList(T min_key, T max_key) {
 
 template <typename T>
 SkipList<T>::~SkipList() {
-    SkipNode<T> *temp = head;
+    SkipNode<T> *temp = this->head;
     SkipNode<T> *next;
-    while (temp) {
-        next = temp->forward[0];
+    if (this->head) {
+        while (temp != tail) {
+            next = temp->forward[0];
+            delete temp;
+            temp = next;
+        }
         delete temp;
-        temp = next;
     }
 }
 
