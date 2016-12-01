@@ -19,16 +19,14 @@ template <typename T> class SkipList;
 
 template <typename T>
 class SkipNode {
-    friend class SkipList<T>;
-
-    public:
-        inline SkipNode(T key, int height);
-        inline SkipNode(int height);
-        inline ~SkipNode();
+public:
+    inline SkipNode(T key, int height);
+    inline SkipNode(int height);
+    inline ~SkipNode();
         
-        T key;
-        int height;
-        SkipNode<T>** forward;
+    T key;
+    int height;
+    SkipNode<T>** forward;
 };
 
 template <typename T>

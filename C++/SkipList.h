@@ -31,23 +31,23 @@ using namespace std;
 
 template <typename T>
 class SkipList {
-    public:
-        SkipList<T>(T min_key, T max_key);
-        ~SkipList();
+public:
+    SkipList<T>(T min_key, T max_key);
+    ~SkipList();
 
-        void insert(T key);
-        bool remove(T key);
-        SkipNode<T> *search(T key);
+    void insert(T key);
+    bool remove(T key);
+    SkipNode<T> *search(T key);
         
-        void print_list(ofstream& outFile);
+    void print_list(ofstream& outFile);
 
-        int heightGen();
+    int heightGen();
         
-        SkipNode<T> *head;
-        SkipNode<T> *tail;
-        float prob = 0.5;
-        static const int max_height = 16;
-        int max_curr_height;
+    SkipNode<T> *head;
+    SkipNode<T> *tail;
+    float prob = 0.5;
+    static const int max_height = 16;
+    int max_curr_height;
 };
 
 
