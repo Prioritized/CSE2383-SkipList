@@ -1,19 +1,12 @@
----
-title: "Skip List Analysis"
-output:
-  md_document:
-    toc: yes
-    variant: markdown_github
-  html_notebook: default
-  pdf_document: default
-  word_document: default
----
+-   [Skip List](#skip-list)
+-   [Binary Search Tree](#binary-search-tree)
+-   [Linked List](#linked-list)
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. 
-
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook.
 
 Load libraries and read in data:
-```{r Load Libraries and Read Data}
+
+``` r
 library(ggplot2)
 library(scales)
 
@@ -55,9 +48,10 @@ Rsq_lin = function(x) {
 }
 ```
 
-#Skip List
+Skip List
+=========
 
-```{r Skip List Logarithmic Regression, fig.height=3, fig.width=8, warning=FALSE}
+``` r
 p_log.sl <- ggplot(data=df.sl, aes(n, tpo, color = operation)) +
   geom_point(size = 0.5) +
   geom_smooth(formula = tpo ~ n, method = "lm", size = 0.5, color = "gray50") +
@@ -77,11 +71,18 @@ p_log.sl <- ggplot(data=df.sl, aes(n, tpo, color = operation)) +
   facet_grid(. ~ operation)
 p_log.sl
 ```
-R<sup>2</sup> values for each operation:
-```{r Skip List Logarithmic R-squared}
+
+![](SkipListAnalysis_files/figure-markdown_github/Skip%20List%20Logarithmic%20Regression-1.png) R<sup>2</sup> values for each operation:
+
+``` r
 Rsq_log(df.sl)
 ```
-```{r Skip List Logarithmic Regression Short Data, fig.height=3, fig.width=8, warning=FALSE}
+
+    ## delete: 0.709693
+    ## insert: 0.700800
+    ## search: 0.690260
+
+``` r
 p_log.sl.short <- ggplot(data=df.sl.short, aes(log10(n), tpo, color = operation)) +
   geom_point(size = 0.5) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
@@ -95,15 +96,19 @@ p_log.sl.short <- ggplot(data=df.sl.short, aes(log10(n), tpo, color = operation)
   facet_grid(. ~ operation)
 p_log.sl.short
 ```
-```{r Skip List Short Log R-squared}
+
+![](SkipListAnalysis_files/figure-markdown_github/Skip%20List%20Logarithmic%20Regression%20Short%20Data-1.png)
+
+``` r
 #Rsq_log(df.sl.short)
 df.r2 <- subset(df.sl.short, operation == "insert")
 fit <- lm(log10(df.r2$n) ~ log10(df.r2$tpo))
 summary(fit)$adj.r.squared
 ```
 
+    ## [1] 0.6831212
 
-```{r Skip List Linear Regression, fig.height=3, fig.width=8}
+``` r
 p_linear.sl <- ggplot(data=df.sl, aes(n / 10^6, tpo, color = operation)) +
   geom_point(size = 0.5) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
@@ -118,12 +123,20 @@ p_linear.sl <- ggplot(data=df.sl, aes(n / 10^6, tpo, color = operation)) +
 p_linear.sl
 ```
 
-```{r Skip List Linear R-squared}
+![](SkipListAnalysis_files/figure-markdown_github/Skip%20List%20Linear%20Regression-1.png)
+
+``` r
 Rsq_lin(df.sl)
 ```
 
-#Binary Search Tree
-```{r Binary Search Tree Logarithmic Regression, fig.height=3, fig.width=8, warning=FALSE}
+    ## delete: 0.869304
+    ## insert: 0.865875
+    ## search: 0.895552
+
+Binary Search Tree
+==================
+
+``` r
 p_log.bst <- ggplot(data=df.bst, aes(n, tpo, color = operation)) +
   geom_point(size = 0.5) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
@@ -141,12 +154,17 @@ p_log.bst <- ggplot(data=df.bst, aes(n, tpo, color = operation)) +
 p_log.bst
 ```
 
-```{r}
+![](SkipListAnalysis_files/figure-markdown_github/Binary%20Search%20Tree%20Logarithmic%20Regression-1.png)
+
+``` r
 Rsq_log(df.bst)
 ```
 
+    ## delete: 0.751767
+    ## insert: 0.910839
+    ## search: 0.899026
 
-```{r Binary Search Tree Linear Regression, fig.height=3, fig.width=8}
+``` r
 p_linear.bst <- ggplot(data=df.bst, aes(n / 10^6, tpo, color = operation)) +
   geom_point(size = 0.5) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
@@ -162,13 +180,20 @@ p_linear.bst <- ggplot(data=df.bst, aes(n / 10^6, tpo, color = operation)) +
 p_linear.bst
 ```
 
-```{r}
+![](SkipListAnalysis_files/figure-markdown_github/Binary%20Search%20Tree%20Linear%20Regression-1.png)
+
+``` r
 Rsq_lin(df.bst)
 ```
 
+    ## delete: 0.806583
+    ## insert: 0.658275
+    ## search: 0.673133
 
-#Linked List
-```{r Linked List Logarithmic Regression, fig.height=3, fig.width=8, warning=FALSE}
+Linked List
+===========
+
+``` r
 p_log.ll <- ggplot(data=df.ll, aes(n, tpo, color = operation)) +
   geom_point(size = 0.5) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
@@ -186,11 +211,17 @@ p_log.ll <- ggplot(data=df.ll, aes(n, tpo, color = operation)) +
 p_log.ll
 ```
 
-```{r}
+![](SkipListAnalysis_files/figure-markdown_github/Linked%20List%20Logarithmic%20Regression-1.png)
+
+``` r
 Rsq_log(df.ll)
 ```
 
-```{r Linked List Linear Regression, fig.height=3, fig.width=8}
+    ## delete: 0.502836
+    ## insert: 0.497537
+    ## search: 0.511234
+
+``` r
 p_linear.ll <- ggplot(data=df.ll, aes(n / 10^4, tpo, color = operation)) +
   geom_point(size = 0.5) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
@@ -205,11 +236,17 @@ p_linear.ll <- ggplot(data=df.ll, aes(n / 10^4, tpo, color = operation)) +
 p_linear.ll
 ```
 
-```{r}
+![](SkipListAnalysis_files/figure-markdown_github/Linked%20List%20Linear%20Regression-1.png)
+
+``` r
 Rsq_lin(df.ll)
 ```
 
-```{r Double Logarithmic Regression, fig.height=3, fig.width=8, warning=FALSE}
+    ## delete: 0.996232
+    ## insert: 0.995147
+    ## search: 0.997242
+
+``` r
 p_log.double <- ggplot(data=df.double, aes(n, tpo, color = structure)) +
   geom_point(size = 0.5) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
@@ -227,3 +264,4 @@ p_log.double <- ggplot(data=df.double, aes(n, tpo, color = structure)) +
 p_log.double
 ```
 
+![](SkipListAnalysis_files/figure-markdown_github/Double%20Logarithmic%20Regression-1.png)
