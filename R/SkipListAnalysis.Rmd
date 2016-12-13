@@ -1,10 +1,13 @@
 ---
-title: "Skip List Analysis"
+title: "Analysis"
 output:
   md_document:
     toc: yes
     variant: markdown_github
-  html_notebook: default
+  html_notebook:
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
   pdf_document: default
   word_document: default
 ---
@@ -13,18 +16,21 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook.
 
 
 Load libraries and read in data:
-```{r Load Libraries and Read Data}
+```{r Load Libraries}
 library(ggplot2)
 library(scales)
+```
 
+```{r Load Data, echo=FALSE}
 df <- read.csv("timing_results.csv")
 df.sl <- subset(df, structure == "skip list")
 df.bst <- subset(df, structure == "binary tree")
 df.ll <- subset(df, structure == "linked list")
 df.sl.short <- subset(df.sl, n <= 100000)
 df.double <- subset(df, structure %in% c("binary tree", "skip list"))
+```
 
-
+```{r echo=FALSE}
 scientific_10 = function(x) {parse(text=gsub("e", "%*%10^", scientific_format()(x)))}
 log10_minor_break = function (...){
   function(x) {
@@ -56,11 +62,12 @@ Rsq_lin = function(x) {
 ```
 
 #Skip List
+##Logarithmic
 
-```{r Skip List Logarithmic Regression, fig.height=3, fig.width=8, warning=FALSE}
+```{r Skip List Logarithmic Regression, echo=FALSE, fig.height=3, fig.width=8, warning=FALSE}
 p_log.sl <- ggplot(data=df.sl, aes(n, tpo, color = operation)) +
-  geom_point(size = 0.5) +
-  geom_smooth(formula = tpo ~ n, method = "lm", size = 0.5, color = "gray50") +
+  geom_point(size = 1) +
+  # geom_smooth(formula = tpo ~ n, method = "lm", size = 0.5, color = "gray50") +
   labs(title="Skip List Operations with Logarithmic Regression", x="n", y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
         legend.position = "none",
@@ -77,35 +84,18 @@ p_log.sl <- ggplot(data=df.sl, aes(n, tpo, color = operation)) +
   facet_grid(. ~ operation)
 p_log.sl
 ```
+
 R<sup>2</sup> values for each operation:
-```{r Skip List Logarithmic R-squared}
+```{r Skip List Logarithmic R-squared, echo=FALSE}
 Rsq_log(df.sl)
 ```
-```{r Skip List Logarithmic Regression Short Data, fig.height=3, fig.width=8, warning=FALSE}
-p_log.sl.short <- ggplot(data=df.sl.short, aes(log10(n), tpo, color = operation)) +
-  geom_point(size = 0.5) +
-  #geom_smooth(method="lm", size = 0.5, color = "gray50") +
-  labs(title="Skip List Operations with Logarithmic Regression Short Data", x=expression(Log[10](n)), y="Time per Operation (\u03BCs)") +
-  theme(plot.title = element_text(hjust=0.5),
-        legend.position = "none",
-        panel.spacing = unit(1, "lines"),
-        panel.border = element_rect(fill=NA, color="gray90", size=0.5, linetype="solid"),
-        panel.background = element_rect(fill = "gray90")) +
-  # xlim(0,5) + ylim(0,4) + 
-  facet_grid(. ~ operation)
-p_log.sl.short
-```
-```{r Skip List Short Log R-squared}
-#Rsq_log(df.sl.short)
-df.r2 <- subset(df.sl.short, operation == "insert")
-fit <- lm(log10(df.r2$n) ~ log10(df.r2$tpo))
-summary(fit)$adj.r.squared
-```
+
+##Linear
 
 
-```{r Skip List Linear Regression, fig.height=3, fig.width=8}
+```{r Skip List Linear Regression, echo=FALSE, fig.height=3, fig.width=8}
 p_linear.sl <- ggplot(data=df.sl, aes(n / 10^6, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Skip List Operations with Linear Regression", x=expression("n "*(10^6)), y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -118,14 +108,16 @@ p_linear.sl <- ggplot(data=df.sl, aes(n / 10^6, tpo, color = operation)) +
 p_linear.sl
 ```
 
-```{r Skip List Linear R-squared}
+R<sup>2</sup> values for each operation:
+```{r Skip List Linear R-squared, echo=FALSE}
 Rsq_lin(df.sl)
 ```
 
 #Binary Search Tree
-```{r Binary Search Tree Logarithmic Regression, fig.height=3, fig.width=8, warning=FALSE}
+##Logarithmic
+```{r Binary Search Tree Logarithmic Regression, echo=FALSE, fig.height=3, fig.width=8, warning=FALSE}
 p_log.bst <- ggplot(data=df.bst, aes(n, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Binary Search Tree Operations with Logarithmic Regression", x="n", y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -141,14 +133,15 @@ p_log.bst <- ggplot(data=df.bst, aes(n, tpo, color = operation)) +
 p_log.bst
 ```
 
-```{r}
+R<sup>2</sup> values for each operation:
+```{r echo=FALSE}
 Rsq_log(df.bst)
 ```
+##Linear
 
-
-```{r Binary Search Tree Linear Regression, fig.height=3, fig.width=8}
+```{r Binary Search Tree Linear Regression, echo=FALSE, fig.height=3, fig.width=8}
 p_linear.bst <- ggplot(data=df.bst, aes(n / 10^6, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Binary Search Tree Operations with Linear Regression", x=expression("n "*(10^6)), y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -162,15 +155,17 @@ p_linear.bst <- ggplot(data=df.bst, aes(n / 10^6, tpo, color = operation)) +
 p_linear.bst
 ```
 
-```{r}
+R<sup>2</sup> values for each operation:
+```{r echo=FALSE}
 Rsq_lin(df.bst)
 ```
 
 
 #Linked List
-```{r Linked List Logarithmic Regression, fig.height=3, fig.width=8, warning=FALSE}
+##Logarithmic
+```{r Linked List Logarithmic Regression, echo=FALSE, fig.height=3, fig.width=8, warning=FALSE}
 p_log.ll <- ggplot(data=df.ll, aes(n, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Linked List Operations with Logarithmic Regression", x="n", y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -186,13 +181,14 @@ p_log.ll <- ggplot(data=df.ll, aes(n, tpo, color = operation)) +
 p_log.ll
 ```
 
-```{r}
+R<sup>2</sup> values for each operation:
+```{r echo=FALSE}
 Rsq_log(df.ll)
 ```
-
-```{r Linked List Linear Regression, fig.height=3, fig.width=8}
+##Linear
+```{r Linked List Linear Regression, echo=FALSE, fig.height=3, fig.width=8}
 p_linear.ll <- ggplot(data=df.ll, aes(n / 10^4, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Linked List Operations with Linear Regression", x=expression("n "*(10^4)), y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -205,15 +201,18 @@ p_linear.ll <- ggplot(data=df.ll, aes(n / 10^4, tpo, color = operation)) +
 p_linear.ll
 ```
 
-```{r}
+R<sup>2</sup> values for each operation:
+```{r echo=FALSE}
 Rsq_lin(df.ll)
 ```
 
-```{r Double Logarithmic Regression, fig.height=3, fig.width=8, warning=FALSE}
+
+#Skip List + Binary Search Tree
+```{r Double Logarithmic Regression, echo=FALSE, fig.height=3, fig.width=8, warning=FALSE}
 p_log.double <- ggplot(data=df.double, aes(n, tpo, color = structure)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) + 
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
-  labs(title="Binary Search Tree Operations with Logarithmic Regression", x="n", y="Time per Operation (\u03BCs)") +
+  labs(x="n", y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
         # legend.position = "none",
         panel.spacing = unit(1, "lines"),
