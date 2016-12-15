@@ -1,4 +1,4 @@
-n, time, tpo, structure, operation
+n,time,tpo,structure,operation
 100,85,0.85,skip list,insert
 100,11,0.11,skip list,search
 100,49,0.49,skip list,delete

@@ -22,16 +22,17 @@ library(scales)
 ```
 
 ```{r Load Data, echo=FALSE}
-df <- read.csv("timing_results.csv")
+df <- read.csv("../data/timing_results.csv")
+
 df.sl <- subset(df, structure == "skip list")
 df.bst <- subset(df, structure == "binary tree")
 df.ll <- subset(df, structure == "linked list")
-df.sl.short <- subset(df.sl, n <= 100000)
-df.double <- subset(df, structure %in% c("binary tree", "skip list"))
+df.double <- rbind(df.sl, df.bst)
 ```
 
 ```{r echo=FALSE}
 scientific_10 = function(x) {parse(text=gsub("e", "%*%10^", scientific_format()(x)))}
+
 log10_minor_break = function (...){
   function(x) {
     minx         = floor(min(log10(x), na.rm=T))-1;
@@ -44,6 +45,7 @@ log10_minor_break = function (...){
     return(10^(minor_breaks))
   }
 }
+
 Rsq_log = function(x) {
   for (op in c("delete", "insert", "search")) {
     df.r2 <- subset(x, operation == op)

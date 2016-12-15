@@ -1,15 +1,14 @@
 library(ggplot2)
 library(scales)
 
-df <- read.csv("timing_results.csv")
+df <- read.csv("../data/timing_results.csv")
+
 df.sl <- subset(df, structure == "skip list")
 df.bst <- subset(df, structure == "binary tree")
 df.ll <- subset(df, structure == "linked list")
-df.sl.short <- subset(df.sl, n <= 100000)
-df.double <- subset(df, structure %in% c("binary tree", "skip list"))
+df.double <- rbind(df.sl, df.bst)
 
 
-scientific_10 = function(x) {parse(text=gsub("e", "%*%10^", scientific_format()(x)))}
 log10_minor_break = function (...){
   function(x) {
     minx         = floor(min(log10(x), na.rm=T))-1;
@@ -22,6 +21,7 @@ log10_minor_break = function (...){
     return(10^(minor_breaks))
   }
 }
+
 Rsq_log = function(x) {
   for (op in c("delete", "insert", "search")) {
     df.r2 <- subset(x, operation == op)
@@ -40,9 +40,9 @@ Rsq_lin = function(x) {
 
 
 # skip list
-png(height = 1200, width = 2600, filename = "plot_sl_log.png", type = "cairo", res = 400)
+#png(height = 1200, width = 2600, filename = "plot_sl_log.png", type = "cairo", res = 400)
 p_log.sl <- ggplot(data=df.sl, aes(n, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   geom_smooth(formula = tpo ~ n, method = "lm", size = 0.5, color = "gray50") +
   labs(title="Skip List Operations with Logarithmic Regression", x="n", y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -62,9 +62,9 @@ p_log.sl
 
 Rsq_log(df.sl)
 
-png(height = 1200, width = 2600, filename = "plot_sl_lin.png", type = "cairo", res = 400)
+#png(height = 1200, width = 2600, filename = "plot_sl_lin.png", type = "cairo", res = 400)
 p_linear.sl <- ggplot(data=df.sl, aes(n / 10^6, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Skip List Operations with Linear Regression", x=expression("n "*(10^6)), y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -79,9 +79,9 @@ p_linear.sl
 Rsq_lin(df.sl)
 
 # binary search tree
-png(height = 1200, width = 2600, filename = "plot_bst_log.png", type = "cairo", res = 400)
+#png(height = 1200, width = 2600, filename = "plot_bst_log.png", type = "cairo", res = 400)
 p_log.bst <- ggplot(data=df.bst, aes(n, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Binary Search Tree Operations with Logarithmic Regression", x="n", y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -98,9 +98,9 @@ p_log.bst
 
 Rsq_log(df.bst)
 
-png(height = 1200, width = 2600, filename = "plot_bst_lin.png", type = "cairo", res = 400)
+#png(height = 1200, width = 2600, filename = "plot_bst_lin.png", type = "cairo", res = 400)
 p_linear.bst <- ggplot(data=df.bst, aes(n / 10^6, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Binary Search Tree Operations with Linear Regression", x=expression("n "*(10^6)), y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -116,9 +116,9 @@ p_linear.bst
 Rsq_lin(df.bst)
 
 # linked list
-png(height = 1200, width = 2600, filename = "plot_ll_log.png", type = "cairo", res = 400)
+#png(height = 1200, width = 2600, filename = "plot_ll_log.png", type = "cairo", res = 400)
 p_log.ll <- ggplot(data=df.ll, aes(n, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Linked List Operations with Logarithmic Regression", x="n", y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -135,9 +135,9 @@ p_log.ll
 
 Rsq_log(df.ll)
 
-png(height = 1200, width = 2600, filename = "plot_ll_lin.png", type = "cairo", res = 400)
+#png(height = 1200, width = 2600, filename = "plot_ll_lin.png", type = "cairo", res = 400)
 p_linear.ll <- ggplot(data=df.ll, aes(n / 10^4, tpo, color = operation)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Linked List Operations with Linear Regression", x=expression("n "*(10^4)), y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -152,10 +152,10 @@ p_linear.ll
 Rsq_lin(df.ll)
 
 
-# skip list and binary search tree
-png(height = 1200, width = 2600, filename = "plot_double_log.png", type = "cairo", res = 400)
+# skip list and binary search tree for direct comparison
+#png(height = 1200, width = 2600, filename = "plot_double_log.png", type = "cairo", res = 400)
 p_log.double <- ggplot(data=df.double, aes(n, tpo, color = structure)) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   #geom_smooth(method="lm", size = 0.5, color = "gray50") +
   labs(title="Binary Search Tree Operations with Logarithmic Regression", x="n", y="Time per Operation (\u03BCs)") +
   theme(plot.title = element_text(hjust=0.5),
@@ -171,5 +171,6 @@ p_log.double <- ggplot(data=df.double, aes(n, tpo, color = structure)) +
 p_log.double
 
 
-grid.arrange(p_log.sl, p_linear.sl, ncol=1, top=textGrob("Skip List", gp=gpar(fontsize=15,font=1)))
-grid.arrange(p_log.bst, p_linear.bst, ncol=1, top=textGrob("Binary Search Tree", gp=gpar(fontsize=15,font=1)))
+# combine logarithmic and linear plots into one if need be...
+#grid.arrange(p_log.sl, p_linear.sl, ncol=1, top=textGrob("Skip List", gp=gpar(fontsize=15,font=1)))
+#grid.arrange(p_log.bst, p_linear.bst, ncol=1, top=textGrob("Binary Search Tree", gp=gpar(fontsize=15,font=1)))
